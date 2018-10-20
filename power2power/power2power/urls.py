@@ -16,8 +16,15 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from api import views
+from rest_framework import routers
 
-urlpatterns = [
+router = routers.SimpleRouter()
+router.register(r'users', views.UserViewSet)
+router.register(r'nodes', views.NodeViewSet)
+
+urlpatterns = router.urls
+
+urlpatterns += [
     url(r'^admin/', admin.site.urls),
     url(r'', views.index)
 ]
