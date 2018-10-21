@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <h1>Welcome to my room</h1>
+  </body>
+  <script>
+    var chatSocket = new WebSocket(
+      'ws://' + window.location.host + '/ws/1/'
+    );
+
+    chatSocket.onmessage = function(e) {
+      var data = JSON.parse(e.data);
+      var message = data['message'];
+      chatSocket.send(JSON.stringify({
+        'message':message
+      }));
+    };
+
+    chatSocket.onclose = function(e) {
+      console.error('Chat socket closed unexpectedly');
+    };
+
+    chatSocket.onopen= function(e) {
+      chatSocket.send('message':'cunt')
+      console.log('sent?')
+    };
+  </script>
+</html>

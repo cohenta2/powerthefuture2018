@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'api.apps.ApiConfig'
+    'api.apps.ApiConfig',
+    'channels',
+    'ws'
 ]
 
 MIDDLEWARE = [
@@ -79,8 +81,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'power',
-        'USER': 'trevor',
-        'PASSWORD': 'password',
+        'USER': 'joseph',
+        'PASSWORD': '123456',
         'HOST': 'localhost',
         'PORT': '',
     }
@@ -132,3 +134,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'api.User'
+
+ASGI_APPLICATION = 'power2power.routing.application'

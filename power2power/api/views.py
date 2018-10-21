@@ -6,9 +6,17 @@ from rest_framework import mixins
 from rest_framework import generics
 from rest_framework import viewsets
 
+from web3.auto import w3
+from web3 import Web3, HTTPProvider
+
 # Create your views here.
 def index(request):
+    #web3 = Web3(HTTPProvider('http://10.0.0.4:8545'))
+
     return render(request, 'index.html')
+
+def graph(request):
+    return render(request, 'graph.html')
 
 class UserViewSet(mixins.RetrieveModelMixin,
                 mixins.ListModelMixin,

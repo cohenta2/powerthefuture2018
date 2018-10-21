@@ -8,16 +8,11 @@ class User(AbstractUser):
 
 
 class Node(models.Model):
-    power_in = models.PositiveIntegerField()
-    power_out = models.PositiveIntegerField()
-    enabled = models.BooleanField(default=False)
+    flow = models.IntegerField(default=0)
     neighbor_ids = models.ManyToManyField('self', symmetrical=False, related_name='neighbor')
-    surge_multiplier = models.PositiveIntegerField(default=1)
-    base_cost_per_unit = models.DecimalField(max_digits=6, decimal_places=2, default=0.10)
+    cost_per_unit = models.PositiveIntegerField(default=1)
+    balance = models.IntegerField(default=0)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-
-    @property
-    def total_cost(self):
-        return self.surge_multiplier * base_cost_per_unit
+    
