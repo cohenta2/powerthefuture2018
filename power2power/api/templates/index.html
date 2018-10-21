@@ -2,11 +2,11 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
-
 {% load static %}
+
 body {
     background-image : url("{% static "api/richmond.png" %}");
-    overflow: hidden;
+    overflow : hidden;
 }
 
 .links line {
@@ -27,10 +27,40 @@ text {
     position : fixed;
 }
 
+.logo {
+  background-image: url("{% static "api/dominion.png" %}")
+  position : fixed
+  margin-top : 0px
+  margin-left : 0px; 
+}
+
 </style>
 <svg width="100%" height="1000"></svg>
+<div id='logo'> 
+
+</div>
 <script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+<script src="https://d3js.org/d3-selection-multi.v1.min.js"></script>
 <script>
+var web3 = new Web3(new Web3.providers.HttpProvider("http://172.18.0.2:30303"));
+var abi = [{"constant":false,"inputs":[{"name":"from","type":"address"},{"name":"to","type":"address"},{"name":"amount","type":"int256"}],"name":"processTransaction","outputs":[],"type":"function"},{"inputs":[],"type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"from","type":"address"},{"indexed":false,"name":"to","type":"address"},{"indexed":false,"name":"amount","type":"int256"}],"name":"PowerTransaction","type":"event"}]
+
+// var contract = web3.eth.contract(abi);
+// var myContract = contract.at('0x57de5d0c92e2c9a285b394b80a16088891215aed');
+// console.log(myContract)
+
+// var event = myContract.PowerTransaction();
+
+// event.watch(function(error, result){
+//  if (!error)
+//    console.log(result);
+// });
+
+// var event = myContractInstance.MyEvent([{valueA: 23}] [, additionalFilterObject] , function(error, result){
+//  if (!error)
+//    console.log(result);
+// });
 
 var svg = d3.select("svg"),
     width = +svg.attr("width"),
@@ -45,27 +75,40 @@ var simulation = d3.forceSimulation()
 
 d3.json("{% static "api/data.json" %}", function(error, graph) {
   if (error) throw console.log(error);
-
-//   for(i = 0; i < numNodes; i++) {
-//       var temp = {'id' : i, 'fixed' : true}
-//       temp.fx = getRandomInt(min, 1500)
-//       temp.fy = getRandomInt(min, 600)
-//       graph.nodes.push(temp)
-//   }
   
+  //var socket = new WebSocket('');
+
+  // socket.onmessage = function(e) {
+  //  console.log('we did it') 
+  // }
+  
+  for(i in graph.nodes) {
+    graph.nodes[i].flow = getRandomInt(-1, 1);
+  }
+
+  for(i in graph.links) {
+    graph.links[i].enabled = getRandomInt(0, 1);
+  }
 //  console.log(JSON.stringify(graph.nodes))
   
   function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
-  
+
   var link = svg.append("g")
       .attr("class", "links")
     .selectAll("line")
     .data(graph.links)
     .enter().append("line")
-      .attr("stroke-width", 3)
-      .attr('stroke', '#030303');
+      .attr("stroke-width", 6)
+      .attr('stroke', 'black')
+      .on('click', function() {
+          if (d3.select(this).attr('stroke') == 'black') {
+            d3.select(this).attr('stroke', 'red') 
+          } else {
+            d3.select(this).attr('stroke', 'black') 
+          }
+      })  
 
   var node = svg.append("g")
       .attr("class", "nodes")
@@ -73,16 +116,17 @@ d3.json("{% static "api/data.json" %}", function(error, graph) {
     .data(graph.nodes)
     .enter().append("g")
   
-  console.log(node)
-    
+  var colors = ['white', '#28ff08', 'orange']
   var circles = node.append("circle")
       .attr("r", 10)
-      .attr("fill", 'white')
-      /*.call(d3.drag()
-          .on("start", dragstarted)
-          .on("drag", dragged)
-          .on("end", dragended));
-        */
+      .attr("fill", 'white') 
+      .on('click', function(d) {
+        var temp = d3.select(this).attr('fill');
+        var index = colors.indexOf(temp);
+        if (index == 2) {index = -1}
+        d3.select(this).attr('fill', colors[index + 1])
+      })
+      
   var lables = node.append("text")
       .text(function(d) {
         return d.id;
